@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RE-BRAIN Web Platform - Integrated Knowledge & Wellbeing Hulu Migas</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+            },
+            migas: {
+              navy: '#0b132b',
+              slate: '#1c2541',
+              card: '#1e293b',
+              accent: '#38bdf8',
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+    }
+    .panic-btn-pulse { animation: pulse-red 2s infinite; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col md:flex-row overflow-x-hidden antialiased selection:bg-teal-500 selection:text-slate-950">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+  <!-- Sidebar -->
+  <aside class="w-full md:w-72 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0 z-30">
+    <div>
+      <!-- Platform Header -->
+      <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-slate-950 text-xl font-black shadow-lg shadow-teal-500/20">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-lg leading-tight tracking-wide text-white">RE-BRAIN<span class="text-teal-400">.WEB</span></h1>
+            <p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Hulu Migas Knowledge Platform</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- User NIP Badge Card -->
+      <div class="mx-4 my-4 p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/50 flex items-center gap-3">
+        <div class="relative">
+          <div class="w-10 h-10 rounded-lg bg-teal-500/20 border border-teal-500/40 text-teal-400 flex items-center justify-center font-bold text-sm">
+            BS
+          </div>
+          <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+        </div>
+        <div class="overflow-hidden">
+          <h4 class="text-sm font-bold text-white truncate">Budi Santoso</h4>
+          <p class="text-xs text-teal-400 font-mono font-medium truncate">NIP: 199408122023011002</p>
+          <p class="text-[10px] text-slate-400 truncate">PT Pertamina Hulu Energi - Mahakam</p>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="px-3 space-y-1 my-2">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-chart-pie w-5 text-center text-teal-400"></i>
+          <span>Dashboard & Profil</span>
+        </button>
+
+        <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-[#22c55e] fa-list-check w-5 text-center text-emerald-400"></i>
+          <span>Work Analytics & Tracker</span>
+        </button>
+
+        <button onclick="switchTab('scheduler')" id="nav-scheduler" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-calendar-alt w-5 text-center text-sky-400"></i>
+          <span>Roster & Absensi NIP</span>
+        </button>
+
+        <button onclick="switchTab('repository')" id="nav-repository" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-circle-play w-5 text-center text-purple-400"></i>
+          <span>Video Troubleshooting SOP</span>
+        </button>
+
+        <button onclick="switchTab('broadcast')" id="nav-broadcast" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-bullhorn w-5 text-center text-amber-400"></i>
+          <span>Corporate Broadcast</span>
+        </button>
+
+        <button onclick="switchTab('wellbeing')" id="nav-wellbeing" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-heart-pulse w-5 text-center text-rose-400"></i>
+          <span>Feedback & Well-Being</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Bottom Actions: Emergency Panic Button Trigger -->
+    <div class="p-4 border-t border-slate-800 space-y-3">
+      <button onclick="openPanicModal()" class="panic-btn-pulse w-full bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-lg shadow-red-900/40 border border-red-500/50 flex items-center justify-center gap-2.5 transition-all cursor-pointer">
+        <i class="fa-solid fa-triangle-exclamation text-base animate-bounce"></i>
+        <span>PANIC BUTTON HSE</span>
+      </button>
+
+      <div class="text-[10px] text-slate-500 text-center font-mono">
+        UGM Innovation Contest 2026 • Non-AI Platform
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content View Area -->
+  <main class="flex-1 flex flex-col min-w-0 bg-slate-950 overflow-y-auto custom-scrollbar">
+    <!-- Top Bar Header -->
+    <header class="sticky top-0 z-20 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <h2 id="current-tab-title" class="text-base font-bold text-white flex items-center gap-2">
+          Dashboard Overview
+        </h2>
+        <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full border border-slate-700 font-mono">
+          Blok Mahakam - Offshore Rig Alpha
+        </span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Live Clock & Status -->
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span id="live-clock" class="text-slate-300">00:00:00 WITA</span>
+        </div>
+
+        <button onclick="showToast('Sistem sinkronisasi NIP aktif. Data lokal tersimpan secara aman.', 'info')" class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-teal-400 flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-bell text-sm"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Sections -->
+    <div class="p-6 space-y-6">
+
+      <!-- TAB 1: DASHBOARD & PROFIL PEGAWAI (FITUR 1) -->
+      <section id="tab-dashboard" class="tab-content space-y-6">
+        <!-- Welcome Banner -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 border border-teal-500/30 p-6 md:p-8">
+          <div class="absolute -right-10 -bottom-10 opacity-10 text-teal-300 pointer-events-none">
+            <i class="fa-solid fa-oil-well text-[220px]"></i>
+          </div>
+          <div class="relative z-10 max-w-2xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-400 border border-teal-500/20 mb-3">
+              <i class="fa-solid fa-shield-check"></i> Terverifikasi Berbasis NIP Resmi
+            </span>
+            <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-2">Selamat Datang, Budi Santoso</h3>
+            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+              Platform transfer pengetahuan tacit dan manajemen kerja harian hulu migas. Akses bimbingan mentor senior, materi SOP terstruktur, dan pemantauan kesehatan kerja dalam satu genggaman.
+            </p>
+            <div class="flex flex-wrap gap-4 text-xs font-mono">
+              <div class="bg-slate-900/80 backdrop-blur px-3.5 py-2 rounded-xl border border-slate-700/60">
+                <span class="text-slate-400">Jabatan:</span> <span class="text-teal-400 font-bold">Junior Field Engineer</span>
+              </div>
+              <div class="bg-slate-900/80 backdrop-blur px-3.5 py-2 rounded-xl border border-slate-700/60">
+                <span class="text-slate-400">Penugasan:</span> <span class="text-teal-400 font-bold">FPSO Sepat - Unit 02</span>
+              </div>
+              <div class="bg-slate-900/80 backdrop-blur px-3.5 py-2 rounded-xl border border-slate-700/60">
+                <span class="text-slate-400">Status Roster:</span> <span class="text-emerald-400 font-bold">2 Weeks ON (Hari ke-5)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid: Senior Mentor & Onboarding Progress -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Senior Mentor Profile Badge (1 Col) -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-teal-500/5 rounded-bl-full pointer-events-none"></div>
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-user-graduate"></i> Senior Mentor (Kakak Asuh)
+                </span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">Ditunjuk HR</span>
+              </div>
+
+              <div class="flex items-center gap-4 mb-5">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-800 border-2 border-teal-500/40 text-white flex items-center justify-center font-extrabold text-xl shadow-md">
+                  BW
+                </div>
+                <div>
+                  <h4 class="text-base font-bold text-white">Ir. Bambang Wijaya, M.T.</h4>
+                  <p class="text-xs text-slate-400">Lead Production Engineer</p>
+                  <p class="text-[11px] text-teal-400 font-mono mt-1"><i class="fa-solid fa-award"></i> 28+ Tahun Pengalaman Hulu</p>
+                </div>
+              </div>
+
+              <div class="space-y-2.5 text-xs text-slate-300 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Spesialisasi:</span>
+                  <span class="font-medium text-slate-200">Gas Lift Optimization</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Sesi Terakhir:</span>
+                  <span class="font-medium text-slate-200">12 Okt 2026 (Praktik Field)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Kontak Mentoring:</span>
+                  <span class="font-mono text-teal-400">EXT-402 (Rig Internal)</span>
+                </div>
+              </div>
+            </div>
+
+            <button onclick="switchTab('wellbeing')" class="mt-5 w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-teal-300 font-semibold text-xs rounded-xl border border-slate-700 transition-colors flex items-center justify-center gap-2">
+              <i class="fa-regular fa-comments"></i> Ajukan Konsultasi / Feedback
+            </button>
+          </div>
+
+          <!-- Onboarding Progress & Core Metrics (2 Cols) -->
+          <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-base font-bold text-white">Progress Onboarding & Transfer Pengetahuan</h3>
+                  <p class="text-xs text-slate-400">Target kemandirian staf baru (Time-to-Autonomy: 2.5 Bulan)</p>
+                </div>
+                <span class="text-xl font-extrabold text-teal-400 font-mono">78%</span>
+              </div>
+
+              <!-- Main Progress Bar -->
+              <div class="w-full bg-slate-950 rounded-full h-3.5 p-0.5 border border-slate-800 mb-6">
+                <div class="bg-gradient-to-r from-teal-500 to-emerald-400 h-full rounded-full transition-all duration-1000" style="width: 78%;"></div>
+              </div>
+
+              <!-- Metric Badges Grid -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl">
+                  <p class="text-[10px] text-slate-400 uppercase font-semibold">SOP Dipelajari</p>
+                  <p class="text-lg font-bold text-white mt-1">18 / 22 <span class="text-xs text-teal-400 font-normal">Video</span></p>
+                </div>
+                <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl">
+                  <p class="text-[10px] text-slate-400 uppercase font-semibold">Jam Pendampingan</p>
+                  <p class="text-lg font-bold text-white mt-1">42 Jam <span class="text-xs text-teal-400 font-normal">Selesai</span></p>
+                </div>
+                <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl">
+                  <p class="text-[10px] text-slate-400 uppercase font-semibold">Tugas Diverifikasi</p>
+                  <p class="text-lg font-bold text-white mt-1">14 Log <span class="text-xs text-emerald-400 font-normal">Acc Mentor</span></p>
+                </div>
+                <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl">
+                  <p class="text-[10px] text-slate-400 uppercase font-semibold">Well-Being Index</p>
+                  <p class="text-lg font-bold text-emerald-400 mt-1">92 / 100 <span class="text-xs text-emerald-500 font-normal">Baik</span></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Cards -->
+            <div class="mt-6 pt-5 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button onclick="switchTab('analytics')" class="p-3 bg-slate-800/60 hover:bg-slate-800 rounded-xl text-left border border-slate-700/50 transition-all group">
+                <div class="flex items-center justify-between text-teal-400 mb-1">
+                  <i class="fa-solid fa-clipboard-check"></i>
+                  <i class="fa-solid fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </div>
+                <p class="text-xs font-bold text-white">Log Harian Tanda Tangan</p>
+                <p class="text-[10px] text-slate-400">3 tugas menunggu review mentor</p>
+              </button>
+
+              <button onclick="switchTab('repository')" class="p-3 bg-slate-800/60 hover:bg-slate-800 rounded-xl text-left border border-slate-700/50 transition-all group">
+                <div class="flex items-center justify-between text-purple-400 mb-1">
+                  <i class="fa-solid fa-file-video"></i>
+                  <i class="fa-solid fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </div>
+                <p class="text-xs font-bold text-white">Bank Video Kasus</p>
+                <p class="text-[10px] text-slate-400">Troubleshooting Pressure Surge</p>
+              </button>
+
+              <button onclick="switchTab('scheduler')" class="p-3 bg-slate-800/60 hover:bg-slate-800 rounded-xl text-left border border-slate-700/50 transition-all group">
+                <div class="flex items-center justify-between text-sky-400 mb-1">
+                  <i class="fa-solid fa-clock-pulse"></i>
+                  <i class="fa-solid fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </div>
+                <p class="text-xs font-bold text-white">Absensi Roster Shift</p>
+                <p class="text-[10px] text-slate-400">Sudah Clock-In 06:48 WITA</p>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: WORK ANALYTICS & TRACKER (FITUR 2) -->
+      <section id="tab-analytics" class="tab-content hidden space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-emerald-400"></i> Work Analytics & Task Tracker
+            </h3>
+            <p class="text-xs text-slate-400">Perekaman log kerja harian dan verifikasi kompetensi secara transparan oleh atasan / mentor</p>
+          </div>
+          <button onclick="openAddTaskModal()" class="px-4 py-2.5 bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-teal-500/20 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Tambah Log Tugas Baru
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Interactive Task List (2 Cols) -->
+          <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <h4 class="text-sm font-bold text-white mb-4 flex items-center justify-between">
+              <span>Daftar Verifikasi Tugas Lapangan</span>
+              <span class="text-xs font-mono text-slate-400">Minggu Ke-8 Penugasan</span>
+            </h4>
+
+            <div class="space-y-3" id="task-list-container">
+              <!-- Task Item 1 -->
+              <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-700 transition-colors">
+                <div class="flex items-start gap-3">
+                  <button onclick="toggleTaskStatus(this)" class="mt-1 w-5 h-5 rounded border border-emerald-500 bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-check text-xs"></i>
+                  </button>
+                  <div>
+                    <h5 class="text-sm font-bold text-white line-through text-slate-400">Inspeksi Rutin Separator Separation Unit-02</h5>
+                    <p class="text-xs text-slate-400">Mengukur pressure gauge & visual check valve seal</p>
+                    <p class="text-[10px] text-teal-400 font-mono mt-1"><i class="fa-regular fa-clock"></i> 13 Okt 2026 • 08:30 WITA</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 border-t sm:border-t-0 border-slate-800 pt-2 sm:pt-0">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    <i class="fa-solid fa-signature"></i> Disetujui Mentor
+                  </span>
+                </div>
+              </div>
+
+              <!-- Task Item 2 -->
+              <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-700 transition-colors">
+                <div class="flex items-start gap-3">
+                  <button onclick="toggleTaskStatus(this)" class="mt-1 w-5 h-5 rounded border border-slate-600 hover:border-emerald-500 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-check text-xs opacity-0"></i>
+                  </button>
+                  <div>
+                    <h5 class="text-sm font-bold text-white">Pembersihan Filter Gas Compressor Unit 3</h5>
+                    <p class="text-xs text-slate-400">SOP #12 - Penanganan sisa residu minyak mentah pada saringan</p>
+                    <p class="text-[10px] text-amber-400 font-mono mt-1"><i class="fa-regular fa-clock"></i> 13 Okt 2026 • Target 15:00 WITA</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 border-t sm:border-t-0 border-slate-800 pt-2 sm:pt-0">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                    <i class="fa-solid fa-hourglass-half"></i> Menunggu Review
+                  </span>
+                </div>
+              </div>
+
+              <!-- Task Item 3 -->
+              <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-700 transition-colors">
+                <div class="flex items-start gap-3">
+                  <button onclick="toggleTaskStatus(this)" class="mt-1 w-5 h-5 rounded border border-slate-600 hover:border-emerald-500 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-check text-xs opacity-0"></i>
+                  </button>
+                  <div>
+                    <h5 class="text-sm font-bold text-white">Studi Mandiri Video Case Study Hydrate Formation</h5>
+                    <p class="text-xs text-slate-400">Menonton materi tacit mentor & merangkum poin pemecahan masalah</p>
+                    <p class="text-[10px] text-sky-400 font-mono mt-1"><i class="fa-regular fa-clock"></i> Target Besok</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 border-t sm:border-t-0 border-slate-800 pt-2 sm:pt-0">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                    Draft
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Competency Summary Chart & Sign-off (1 Col) -->
+          <div class="space-y-6">
+            <!-- Competency Metric Box -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+              <h4 class="text-sm font-bold text-white mb-4">Indeks Peningkatan Kompetensi</h4>
+
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-300">HSE & Risk Mitigation</span>
+                    <span class="text-emerald-400 font-mono font-bold">95%</span>
+                  </div>
+                  <div class="w-full bg-slate-950 rounded-full h-2">
+                    <div class="bg-emerald-500 h-2 rounded-full" style="width: 95%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-300">Gas & Oil Processing SOP</span>
+                    <span class="text-teal-400 font-mono font-bold">82%</span>
+                  </div>
+                  <div class="w-full bg-slate-950 rounded-full h-2">
+                    <div class="bg-teal-500 h-2 rounded-full" style="width: 82%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-300">Field Troubleshooting</span>
+                    <span class="text-sky-400 font-mono font-bold">70%</span>
+                  </div>
+                  <div class="w-full bg-slate-950 rounded-full h-2">
+                    <div class="bg-sky-500 h-2 rounded-full" style="width: 70%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 text-xs">
+                <p class="text-slate-400">Atasan Langsung (Supervisor):</p>
+                <p class="font-bold text-white mt-0.5">Drs. H. Mulyadi (Field Manager)</p>
+                <div class="mt-2 flex items-center gap-2 text-emerald-400 font-mono text-[11px]">
+                  <i class="fa-solid fa-stamp"></i> Approval Digital Active (NIP Auto-sign)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: DIGITAL SCHEDULER & ATTENDANCE (FITUR 3) -->
+      <section id="tab-scheduler" class="tab-content hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Attendance Clock-In Widget (1 Col) -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  <i class="fa-solid fa-fingerprint text-sky-400"></i> Absensi NIP & Geo-Tagging
+                </h3>
+                <span class="text-[10px] font-mono bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded border border-sky-500/30">FPSO Rig</span>
+              </div>
+
+              <div class="text-center py-6 bg-slate-950/80 rounded-xl border border-slate-800 mb-6">
+                <p class="text-xs text-slate-400 font-mono mb-1">Status Kehadiran Hari Ini</p>
+                <div id="attendance-status-text" class="text-lg font-bold text-emerald-400 mb-2">
+                  <i class="fa-solid fa-circle-check"></i> Sudah Clock-In (06:48 WITA)
+                </div>
+                <div class="inline-flex items-center gap-1.5 text-[11px] text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-800 font-mono">
+                  <i class="fa-solid fa-location-dot text-rose-500"></i> Lat: -1.2483, Long: 116.8923
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <button id="btn-clockin" onclick="doClockIn()" class="w-full py-3 bg-slate-800 text-slate-500 cursor-not-allowed font-bold text-xs rounded-xl border border-slate-700 flex items-center justify-center gap-2" disabled>
+                  <i class="fa-solid fa-right-to-bracket"></i> Clock-In Shift Masuk
+                </button>
+                <button id="btn-clockout" onclick="doClockOut()" class="w-full py-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs rounded-xl border border-amber-500/40 flex items-center justify-center gap-2 transition-colors">
+                  <i class="fa-solid fa-right-from-bracket"></i> Clock-Out Selesai Shift
+                </button>
+              </div>
+            </div>
+
+            <p class="text-[11px] text-slate-500 text-center mt-4">
+              *Absensi terhubung otomatis dengan NIP resmi PT Pertamina Hulu Energi
+            </p>
+          </div>
+
+          <!-- Roster Shift Calendar 2 Weeks On / 2 Weeks Off (2 Cols) -->
+          <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+              <div>
+                <h3 class="text-base font-bold text-white">Jadwal Roster Kerja (2 Weeks ON / 2 Weeks OFF)</h3>
+                <p class="text-xs text-slate-400">Kalender Penugasan Shift Hulu Migas Oktober 2026</p>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span> Shift Pagi</span>
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> Shift Malam</span>
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span> Off Duty</span>
+              </div>
+            </div>
+
+            <!-- Roster Table/Grid -->
+            <div class="grid grid-cols-7 gap-2 text-center text-xs">
+              <div class="font-bold text-slate-400 py-1">Sen</div>
+              <div class="font-bold text-slate-400 py-1">Sel</div>
+              <div class="font-bold text-slate-400 py-1">Rab</div>
+              <div class="font-bold text-slate-400 py-1">Kam</div>
+              <div class="font-bold text-slate-400 py-1">Jum</div>
+              <div class="font-bold text-slate-400 py-1">Sab</div>
+              <div class="font-bold text-slate-400 py-1">Min</div>
+
+              <!-- Days Mockup -->
+              <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 opacity-40">5</div>
+              <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 opacity-40">6</div>
+              <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 opacity-40">7</div>
+              <div class="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-bold">8</div>
+              <div class="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-bold">9</div>
+              <div class="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-bold">10</div>
+              <div class="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-bold">11</div>
+
+              <div class="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-bold">12</div>
+              <div class="p-2.5 rounded-xl bg-teal-500/20 border-2 border-teal-400 text-white font-extrabold shadow-lg shadow-teal-500/10">13</div>
+              <div class="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">14</div>
+              <div class="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">15</div>
+              <div class="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">16</div>
+              <div class="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">17</div>
+              <div class="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">18</div>
+
+              <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-400">19</div>
+              <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-400">20</div>
+              <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-400">21</div>
+              <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-400">22</div>
+              <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-400">23</div>
+              <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-400">24</div>
+              <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-400">25</div>
+            </div>
+
+            <div class="mt-6 p-4 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs">
+              <div>
+                <span class="text-slate-400">Tanggal Off Duty berikutnya:</span>
+                <span class="font-bold text-emerald-400 ml-2">19 Oktober 2026</span>
+              </div>
+              <span class="text-slate-500 font-mono">Penerbangan Crew Change #304</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: VIDEO REPOSITORY & TROUBLESHOOTING SOP (FITUR 4) -->
+      <section id="tab-repository" class="tab-content hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-circle-play text-purple-400"></i> Repositori Video Troubleshooting (Tacit Knowledge)
+            </h3>
+            <p class="text-xs text-slate-400">Bank data studi kasus nyata dan penanganan masalah teknis dari mentor senior</p>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="relative w-full sm:w-72">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-xs text-slate-500"></i>
+            <input type="text" placeholder="Cari SOP / Masalah Teknis..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500">
+          </div>
+        </div>
+
+        <!-- Video Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- Video Item 1 -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all flex flex-col justify-between group">
+            <div>
+              <div class="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10"></div>
+                <i class="fa-solid fa-oil-well text-6xl text-slate-800 group-hover:scale-110 transition-transform"></i>
+                <button onclick="openVideoModal('Penanganan Pressure Surge pada Gas Compressor Unit 3', 'Ir. Bambang Wijaya', 'SOP-SUB-042')" class="absolute z-20 w-12 h-12 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-lg shadow-xl shadow-purple-900/50 hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-play ml-0.5"></i>
+                </button>
+                <span class="absolute bottom-3 right-3 z-20 font-mono text-[10px] bg-slate-900/90 px-2 py-0.5 rounded text-slate-300">08:45 Min</span>
+              </div>
+              <div class="p-5">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2.5 py-0.5 rounded border border-purple-500/20">Gas Compressor</span>
+                <h4 class="text-sm font-bold text-white mt-2 group-hover:text-purple-300 transition-colors">Penanganan Pressure Surge pada Gas Compressor Unit 3</h4>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Langkah langsung menstabilkan tekanan tanpa harus melakukan emergency shutdown rig.</p>
+              </div>
+            </div>
+
+            <div class="px-5 py-3.5 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+              <span><i class="fa-solid fa-user-tie"></i> Ir. Bambang W.</span>
+              <span class="font-mono text-purple-400">SOP-SUB-042</span>
+            </div>
+          </div>
+
+          <!-- Video Item 2 -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all flex flex-col justify-between group">
+            <div>
+              <div class="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10"></div>
+                <i class="fa-solid fa-water-lower text-6xl text-slate-800 group-hover:scale-110 transition-transform"></i>
+                <button onclick="openVideoModal('Mitigasi Hydrate Formation pada Underwater Pipeline', 'Ir. Budi Santoso', 'SOP-SUB-089')" class="absolute z-20 w-12 h-12 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-lg shadow-xl shadow-purple-900/50 hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-play ml-0.5"></i>
+                </button>
+                <span class="absolute bottom-3 right-3 z-20 font-mono text-[10px] bg-slate-900/90 px-2 py-0.5 rounded text-slate-300">12:10 Min</span>
+              </div>
+              <div class="p-5">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded border border-sky-500/20">Subsea Pipeline</span>
+                <h4 class="text-sm font-bold text-white mt-2 group-hover:text-purple-300 transition-colors">Mitigasi Hydrate Formation pada Underwater Pipeline</h4>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Teknik penginjeksian glycol aman untuk mencegah penyumbatan kristal es laut dalam.</p>
+              </div>
+            </div>
+
+            <div class="px-5 py-3.5 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+              <span><i class="fa-solid fa-user-tie"></i> Ir. Budi S.</span>
+              <span class="font-mono text-purple-400">SOP-SUB-089</span>
+            </div>
+          </div>
+
+          <!-- Video Item 3 -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all flex flex-col justify-between group">
+            <div>
+              <div class="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10"></div>
+                <i class="fa-solid fa-gears text-6xl text-slate-800 group-hover:scale-110 transition-transform"></i>
+                <button onclick="openVideoModal('Prosedur Wellhead Maintenance & Christmas Tree Inspection', 'Drs. H. Mulyadi', 'SOP-SUB-015')" class="absolute z-20 w-12 h-12 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-lg shadow-xl shadow-purple-900/50 hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-play ml-0.5"></i>
+                </button>
+                <span class="absolute bottom-3 right-3 z-20 font-mono text-[10px] bg-slate-900/90 px-2 py-0.5 rounded text-slate-300">15:30 Min</span>
+              </div>
+              <div class="p-5">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20">Wellhead Ops</span>
+                <h4 class="text-sm font-bold text-white mt-2 group-hover:text-purple-300 transition-colors">Prosedur Wellhead Maintenance & Christmas Tree Inspection</h4>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Pemeriksaan rutin kepatuhan katup pengaman sumur gas tekanan tinggi.</p>
+              </div>
+            </div>
+
+            <div class="px-5 py-3.5 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+              <span><i class="fa-solid fa-user-tie"></i> Drs. Mulyadi</span>
+              <span class="font-mono text-purple-400">SOP-SUB-015</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 5: CORPORATE BROADCAST (FITUR 5) -->
+      <section id="tab-broadcast" class="tab-content hidden space-y-6">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-bullhorn text-amber-400"></i> Corporate Broadcast & Pengumuman Direksi
+            </h3>
+            <p class="text-xs text-slate-400">Saluran informasi resmi dari manajemen puncak & pembaruan kebijakan HSE</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            Official Feed
+          </span>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Announcement Card 1 -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-colors">
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30 uppercase tracking-wider">
+                Instruksi Direksi
+              </span>
+              <span class="text-xs font-mono text-slate-400"><i class="fa-regular fa-clock"></i> 11 Okt 2026</span>
+            </div>
+            <h4 class="text-base font-bold text-white mb-2">Arahan Strategis Direktur Utama: Peningkatan Target Keselamatan Zero Accident Q4 2026</h4>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Diberitahukan kepada seluruh pekerja baru dan senior mentor di Blok Mahakam untuk memperketat penerapan SOP keselamatan lapangan. Program RE-BRAIN diwajibkan menjadi acuan utama dalam transfer pengetahuan guna mencegah insiden human error.
+            </p>
+            <div class="flex items-center justify-between pt-4 border-t border-slate-800/80 text-xs text-slate-400">
+              <span class="font-semibold text-slate-300"><i class="fa-solid fa-user-shield text-teal-400"></i> Direksi PT Pertamina Hulu Energi</span>
+              <button onclick="showToast('Dokumen edaran telah diunduh.', 'success')" class="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-download"></i> Unduh Lampiran PDF
+              </button>
+            </div>
+          </div>
+
+          <!-- Announcement Card 2 -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-colors">
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30 uppercase tracking-wider">
+                HSE Bulletin
+              </span>
+              <span class="text-xs font-mono text-slate-400"><i class="fa-regular fa-clock"></i> 08 Okt 2026</span>
+            </div>
+            <h4 class="text-base font-bold text-white mb-2">Pembaruan Panduan Mitigasi Cuaca Ekstrem Laut Dalam</h4>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Menghadapi musim angin barat di perairan offshore, seluruh unit diminta memverifikasi ketersediaan perlengkapan evakuasi dan memastikan fungsi Panic Button pada platform RE-BRAIN telah teruji.
+            </p>
+            <div class="flex items-center justify-between pt-4 border-t border-slate-800/80 text-xs text-slate-400">
+              <span class="font-semibold text-slate-300"><i class="fa-solid fa-hard-hat text-amber-400"></i> Departemen HSE Korporat</span>
+              <button onclick="showToast('Sudah ditandai dibaca.', 'info')" class="text-teal-400 hover:text-teal-300 font-semibold">
+                Tandai Sudah Dibaca
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: TWO-WAY FEEDBACK & MENTAL HEALTH SUPPORT (FITUR 6) -->
+      <section id="tab-wellbeing" class="tab-content hidden space-y-6">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-heart-pulse text-rose-400"></i> Two-Way Feedback & Work Wellbeing
+            </h3>
+            <p class="text-xs text-slate-400">Sistem evaluasi bulanan anonim untuk menjaga kenyamanan psikologis (psychological safety) dan kesehatan mental</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            Terjamin Anonim
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Anonymous Feedback Form Card -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-user-secret text-slate-400"></i> Form Feedback & Evaluasi Mentorship Anonim
+            </h4>
+            <p class="text-xs text-slate-400 mb-5">
+              Saran dan kritik Anda akan terenkripsi dan disampaikan kepada mentor/HR tanpa mencantumkan nama atau NIP Anda.
+            </p>
+
+            <form onsubmit="submitAnonymousFeedback(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Pilih Kategori Feedback</label>
+                <select class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-rose-500">
+                  <option>Beban Kerja & Stres Lapangan</option>
+                  <option>Kenyamanan Bimbingan Mentor Senior</option>
+                  <option>Fasilitas & Keselamatan Lingkungan Kerja</option>
+                  <option>Lainnya</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tingkat Stres / Beban Kerja Minggu Ini</label>
+                <div class="flex items-center gap-4 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                  <input type="range" min="1" max="10" value="3" id="stress-slider" oninput="updateStressLabel(this.value)" class="w-full accent-rose-500">
+                  <span id="stress-val-badge" class="px-2.5 py-1 rounded font-mono text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">3 / 10 (Rendah)</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Pesan Anonim</label>
+                <textarea rows="4" placeholder="Tuliskan pengalaman atau kendala yang dihadapi selama masa adaptasi..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-rose-500" required></textarea>
+              </div>
+
+              <button type="submit" class="w-full py-3 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-900/30 transition-all">
+                Kirim Feedback Anonim
+              </button>
+            </form>
+          </div>
+
+          <!-- Counselor Appointment & Health Metrics Card -->
+          <div class="space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+              <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-user-doctor text-teal-400"></i> Layanan Konseling & Pendampingan
+              </h4>
+              <p class="text-xs text-slate-400 mb-4">Butuh teman cerita atau dukungan profesional terkait tekanan kerja Hulu Migas?</p>
+
+              <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-3 mb-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-xs">
+                    DR
+                  </div>
+                  <div>
+                    <h5 class="text-xs font-bold text-white">dr. Ratna S., Sp.KJ</h5>
+                    <p class="text-[11px] text-slate-400">Konselor Psikologi Industri PHE</p>
+                  </div>
+                </div>
+                <p class="text-[11px] text-slate-300">Jadwal Konsultasi Online: Senin - Jumat (15:00 - 18:00 WITA)</p>
+              </div>
+
+              <button onclick="showToast('Permintaan janji temu dikirim ke Konselor. Jadwal akan dikonfirmasi via pesan rahasia.', 'success')" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-teal-300 font-semibold text-xs rounded-xl border border-slate-700 transition-colors">
+                Buat Janji Konseling Privat
+              </button>
+            </div>
+
+            <!-- Wellbeing Tip -->
+            <div class="bg-gradient-to-br from-slate-900 to-teal-950/50 border border-teal-500/30 rounded-2xl p-5">
+              <div class="flex items-center gap-2 text-teal-400 font-bold text-xs mb-2">
+                <i class="fa-solid fa-lightbulb"></i> Tips Well-Being Hulu Migas
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                "Komunikasi yang jujur antara senior dan junior adalah kunci keselamatan utama di area lepas pantai. Jangan ragu bertanya sebelum bertindak."
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL 1: VIDEO SOP PLAYER PREVIEW -->
+  <div id="modal-video" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 id="modal-video-title" class="text-sm font-bold text-white">Judul Video</h3>
+          <p id="modal-video-author" class="text-xs text-slate-400">Narasumber</p>
+        </div>
+        <button onclick="closeVideoModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto custom-scrollbar space-y-4">
+        <!-- Simulated Player Screen -->
+        <div class="relative aspect-video bg-black rounded-xl overflow-hidden flex items-center justify-center border border-slate-800">
+          <div class="text-center p-6">
+            <i class="fa-solid fa-play-circle text-5xl text-purple-500 animate-pulse mb-3"></i>
+            <p class="text-xs text-slate-300 font-mono">Simulasi Pemutar Video Tacit Knowledge SOP</p>
+            <p class="text-[10px] text-slate-500 mt-1">Video resolusi tinggi direkam langsung dari Rig Alpha</p>
+          </div>
+        </div>
+
+        <!-- SOP Written Summary -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+          <h4 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Ringkasan Langkah SOP Tertulis:</h4>
+          <ol class="list-decimal list-inside text-xs text-slate-300 space-y-1">
+            <li>Lakukan pengecekan bypass valve utama sebelum membuka pressure release line.</li>
+            <li>Pastikan APD lengkap (Helm Safety, Kacamata Anti-Impact, Sarung Tangan Tahan Gas).</li>
+            <li>Injeksi larutan inhibitor secara perlahan sesuai indikator flowmeter.</li>
+            <li>Verifikasi ulang parameter tekanan pada panel kontrol pusat.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: EMERGENCY HSE PANIC BUTTON -->
+  <div id="modal-panic" class="fixed inset-0 bg-red-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-red-500/80 rounded-2xl w-full max-w-lg p-6 shadow-2xl text-center space-y-5">
+      <div class="w-16 h-16 rounded-full bg-red-600/20 text-red-500 border-2 border-red-500 flex items-center justify-center mx-auto text-3xl animate-bounce">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-black text-white uppercase tracking-wider">PANIC BUTTON HSE TERSEDIA</h3>
+        <p class="text-xs text-red-300 mt-1">Kirimkan Sinyal Darurat Segera ke Tim HSE & Command Center Rig</p>
+      </div>
+
+      <div class="bg-slate-950 p-4 rounded-xl border border-red-900/50 text-left text-xs space-y-2">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Identitas Staf:</span>
+          <span class="font-bold text-white font-mono">Budi Santoso (NIP: 199408122023011002)</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Lokasi Terdeteksi:</span>
+          <span class="font-bold text-amber-400 font-mono">Deck Alpha - Separator Unit 02</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Titik Kumpul (Assembly Point):</span>
+          <span class="font-bold text-emerald-400 font-mono">Assembly Point 01 (Helideck)</span>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <button onclick="triggerPanicAlert()" class="w-full py-3.5 bg-red-600 hover:bg-red-500 text-white font-black text-sm rounded-xl shadow-xl shadow-red-900/60 uppercase tracking-widest transition-all">
+          <i class="fa-solid fa-bell"></i> SAYA DALAM BAHAYA - KIRIM ALERT SEKARANG
+        </button>
+        <button onclick="closePanicModal()" class="w-full py-2 bg-slate-800 text-slate-400 hover:text-white text-xs font-semibold rounded-xl">
+          Batal / Tes Rutin
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: ADD TASK MODAL -->
+  <div id="modal-add-task" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white">Input Log Tugas Harian Baru</h3>
+        <button onclick="closeAddTaskModal()" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form onsubmit="submitNewTask(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Nama Tugas Lapangan</label>
+          <input type="text" id="input-task-title" placeholder="Contoh: Inspeksi Valve Pressure Sumur 3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-teal-500" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Deskripsi Singkat / SOP Acuan</label>
+          <textarea id="input-task-desc" rows="3" placeholder="Tuliskan aktivitas yang dikerjakan..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-teal-500" required></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold rounded-xl transition-all">
+          Simpan Log Tugas
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Tab Navigation Logic
+    const tabs = {
+      dashboard: { title: 'Dashboard & Profil Pegawai', navId: 'nav-dashboard', contentId: 'tab-dashboard' },
+      analytics: { title: 'Work Analytics & Tracker', navId: 'nav-analytics', contentId: 'tab-analytics' },
+      scheduler: { title: 'Digital Scheduler & Absensi NIP', navId: 'nav-scheduler', contentId: 'tab-scheduler' },
+      repository: { title: 'Video Troubleshooting SOP', navId: 'nav-repository', contentId: 'tab-repository' },
+      broadcast: { title: 'Corporate Broadcast', navId: 'nav-broadcast', contentId: 'tab-broadcast' },
+      wellbeing: { title: 'Feedback & Mental Health', navId: 'nav-wellbeing', contentId: 'tab-wellbeing' }
+    };
+
+    function switchTab(tabKey) {
+      Object.keys(tabs).forEach(key => {
+        const navBtn = document.getElementById(tabs[key].navId);
+        const contentSec = document.getElementById(tabs[key].contentId);
+
+        if (key === tabKey) {
+          navBtn.classList.add('bg-slate-800', 'text-white', 'border-l-4', 'border-teal-400');
+          navBtn.classList.remove('text-slate-300');
+          contentSec.classList.remove('hidden');
+          document.getElementById('current-tab-title').innerText = tabs[key].title;
+        } else {
+          navBtn.classList.remove('bg-slate-800', 'text-white', 'border-l-4', 'border-teal-400');
+          navBtn.classList.add('text-slate-300');
+          contentSec.classList.add('hidden');
+        }
+      });
+    }
+
+    // Live Clock Function
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WITA';
+      const clockEl = document.getElementById('live-clock');
+      if (clockEl) clockEl.innerText = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Toast Notification System
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      let badgeBg = 'bg-teal-500';
+      let icon = 'fa-circle-info';
+      if (type === 'success') { badgeBg = 'bg-emerald-500'; icon = 'fa-circle-check'; }
+      if (type === 'danger') { badgeBg = 'bg-rose-500'; icon = 'fa-triangle-exclamation'; }
+
+      toast.className = `pointer-events-auto flex items-center gap-3 bg-slate-900 border border-slate-700 text-white text-xs px-4 py-3 rounded-xl shadow-2xl transform transition-all duration-300 translate-y-2 opacity-0`;
+      toast.innerHTML = `
+        <div class="w-6 h-6 rounded-full ${badgeBg} text-slate-950 flex items-center justify-center font-bold shrink-0">
+          <i class="fa-solid ${icon}"></i>
+        </div>
+        <p class="font-medium">${message}</p>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Attendance Actions
+    let isClockedIn = true;
+    function doClockIn() {
+      isClockedIn = true;
+      document.getElementById('attendance-status-text').innerHTML = '<i class="fa-solid fa-circle-check"></i> Sudah Clock-In (06:48 WITA)';
+      document.getElementById('attendance-status-text').className = 'text-lg font-bold text-emerald-400 mb-2';
+      document.getElementById('btn-clockin').disabled = true;
+      document.getElementById('btn-clockin').className = 'w-full py-3 bg-slate-800 text-slate-500 cursor-not-allowed font-bold text-xs rounded-xl border border-slate-700 flex items-center justify-center gap-2';
+      document.getElementById('btn-clockout').disabled = false;
+      document.getElementById('btn-clockout').className = 'w-full py-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs rounded-xl border border-amber-500/40 flex items-center justify-center gap-2 transition-colors';
+      showToast('Clock-In berhasil dicatat dengan NIP.', 'success');
+    }
+
+    function doClockOut() {
+      isClockedIn = false;
+      document.getElementById('attendance-status-text').innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Sudah Clock-Out Shift';
+      document.getElementById('attendance-status-text').className = 'text-lg font-bold text-slate-400 mb-2';
+      document.getElementById('btn-clockout').disabled = true;
+      document.getElementById('btn-clockout').className = 'w-full py-3 bg-slate-800 text-slate-500 cursor-not-allowed font-bold text-xs rounded-xl border border-slate-700 flex items-center justify-center gap-2';
+      document.getElementById('btn-clockin').disabled = false;
+      document.getElementById('btn-clockin').className = 'w-full py-3 bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 font-bold text-xs rounded-xl border border-teal-500/40 flex items-center justify-center gap-2 transition-colors';
+      showToast('Clock-Out berhasil. Selamat beristirahat!', 'info');
+    }
+
+    // Task Checklist Toggle
+    function toggleTaskStatus(btn) {
+      const taskCard = btn.closest('div.p-4');
+      const title = taskCard.querySelector('h5');
+      const icon = btn.querySelector('i');
+
+      if (title.classList.contains('line-through')) {
+        title.classList.remove('line-through', 'text-slate-400');
+        btn.className = 'mt-1 w-5 h-5 rounded border border-slate-600 hover:border-emerald-500 flex items-center justify-center shrink-0';
+        icon.classList.add('opacity-0');
+        showToast('Status tugas dikembalikan ke antrean.', 'info');
+      } else {
+        title.classList.add('line-through', 'text-slate-400');
+        btn.className = 'mt-1 w-5 h-5 rounded border border-emerald-500 bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0';
+        icon.classList.remove('opacity-0');
+        showToast('Tugas ditandai selesai!', 'success');
+      }
+    }
+
+    // Modal Helpers
+    function openVideoModal(title, author, code) {
+      document.getElementById('modal-video-title').innerText = title;
+      document.getElementById('modal-video-author').innerText = `Oleh: ${author} • ${code}`;
+      document.getElementById('modal-video').classList.remove('hidden');
+      document.getElementById('modal-video').classList.add('flex');
+    }
+    function closeVideoModal() {
+      document.getElementById('modal-video').classList.add('hidden');
+      document.getElementById('modal-video').classList.remove('flex');
+    }
+
+    function openPanicModal() {
+      document.getElementById('modal-panic').classList.remove('hidden');
+      document.getElementById('modal-panic').classList.add('flex');
+    }
+    function closePanicModal() {
+      document.getElementById('modal-panic').classList.add('hidden');
+      document.getElementById('modal-panic').classList.remove('flex');
+    }
+    function triggerPanicAlert() {
+      closePanicModal();
+      showToast('ALERT HSE DIKIRIM! Tim Command Center & Rescue sedang menuju lokasi Anda!', 'danger');
+    }
+
+    function openAddTaskModal() {
+      document.getElementById('modal-add-task').classList.remove('hidden');
+      document.getElementById('modal-add-task').classList.add('flex');
+    }
+    function closeAddTaskModal() {
+      document.getElementById('modal-add-task').classList.add('hidden');
+      document.getElementById('modal-add-task').classList.remove('flex');
+    }
+    function submitNewTask(e) {
+      e.preventDefault();
+      const title = document.getElementById('input-task-title').value;
+      const desc = document.getElementById('input-task-desc').value;
+
+      const container = document.getElementById('task-list-container');
+      const newTask = document.createElement('div');
+      newTask.className = 'p-4 rounded-xl bg-slate-950/70 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-700 transition-colors';
+      newTask.innerHTML = `
+        <div class="flex items-start gap-3">
+          <button onclick="toggleTaskStatus(this)" class="mt-1 w-5 h-5 rounded border border-slate-600 hover:border-emerald-500 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-check text-xs opacity-0"></i>
+          </button>
+          <div>
+            <h5 class="text-sm font-bold text-white">${title}</h5>
+            <p class="text-xs text-slate-400">${desc}</p>
+            <p class="text-[10px] text-teal-400 font-mono mt-1"><i class="fa-regular fa-clock"></i> Baru Ditambahkan</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 border-t sm:border-t-0 border-slate-800 pt-2 sm:pt-0">
+          <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+            <i class="fa-solid fa-hourglass-half"></i> Menunggu Review
+          </span>
+        </div>
+      `;
+      container.prepend(newTask);
+      closeAddTaskModal();
+      showToast('Log tugas baru berhasil disimpan!', 'success');
+    }
+
+    // Stress slider update
+    function updateStressLabel(val) {
+      const badge = document.getElementById('stress-val-badge');
+      if (val <= 4) {
+        badge.innerText = `${val} / 10 (Rendah)`;
+        badge.className = 'px-2.5 py-1 rounded font-mono text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0';
+      } else if (val <= 7) {
+        badge.innerText = `${val} / 10 (Sedang)`;
+        badge.className = 'px-2.5 py-1 rounded font-mono text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0';
+      } else {
+        badge.innerText = `${val} / 10 (Tinggi)`;
+        badge.className = 'px-2.5 py-1 rounded font-mono text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30 shrink-0';
+      }
+    }
+
+    function submitAnonymousFeedback(e) {
+      e.preventDefault();
+      showToast('Feedback anonim terenkripsi berhasil dikirim ke HR & Mentor.', 'success');
+      e.target.reset();
+      updateStressLabel(3);
+    }
+
+    // Initialize Default Tab
+    switchTab('dashboard');
+  </script>
+</body>
+</html>
